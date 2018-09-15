@@ -6,13 +6,21 @@ class QsbkSpiderSpider(scrapy.Spider):
     name = 'qsbk_spider'
     allowed_domains = ['qiushibaike.com']
     start_urls = ['https://www.qiushibaike.com/text/1']
+    base_domain="https://www.qiushibaike.com"
 
     def parse(self, response):
         duanzis=response.xpath("//div[@id='content-left']/div")
         for duanzi in duanzis:
             author=duanzi.xpath(".//h2//text()").get().strip()
-            content=duanzi.xpath(".//span//text()").get().strip()
+            content="".join(duanzi.xpath(".//div[@class='content']//span//text()").getall()).strip()
             item=QsbkItem(author=author,content=content)
             yield item
+
+        next_url=response.xpath("//ul[@class='pagination']/li[last()]/a/@href").get()
+        if not next_url:
+            return
+        else:
+            yield scrapy.Request(self.base_domain+next_url,callback=self.parse)
+
 
 
