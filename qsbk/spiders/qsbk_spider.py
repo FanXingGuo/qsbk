@@ -8,6 +8,7 @@ class QsbkSpiderSpider(scrapy.Spider):
     start_urls = ['https://www.qiushibaike.com/text/1']
     base_domain="https://www.qiushibaike.com"
 
+
     def parse(self, response):
         duanzis=response.xpath("//div[@id='content-left']/div")
         for duanzi in duanzis:
